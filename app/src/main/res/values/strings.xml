@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">CretixSync</string>
+    <string name="title_sync">Синхронизация</string>
+    <string name="title_link">Соединение</string>
+    <string name="title_settings">Настройки</string>
+    <string name="sync_status_text">Статус сервера: </string>
+    <string name="btn_start_sync">Синхронизировать</string>
+    <string name="device_not_connected">Устройство не соединено</string>
+    <string name="connect_device">Соединить устройство</string>
+</resources>

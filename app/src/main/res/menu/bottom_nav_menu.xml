@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_sync"
+        android:icon="@drawable/round_sync_24"
+        android:title="@string/title_sync" />
+
+    <item
+        android:id="@+id/navigation_link"
+        android:icon="@drawable/round_phonelink_24"
+        android:title="@string/title_link" />
+
+    <item
+        android:id="@+id/navigation_settings"
+        android:icon="@drawable/round_settings_24"
+        android:title="@string/title_settings" />
+
+</menu>
