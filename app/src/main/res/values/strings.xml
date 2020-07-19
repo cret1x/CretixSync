@@ -6,5 +6,9 @@
     <string name="sync_status_text">Статус сервера: </string>
     <string name="btn_start_sync">Синхронизировать</string>
     <string name="device_not_connected">Устройство не соединено</string>
-    <string name="connect_device">Соединить устройство</string>
+    <string name="status_not_connected">не соединен</string>
+    <string name="status_offline">оффлайн</string>
+    <string name="status_online">онлайн</string>
+    <string name="selected_albums">Выберите альбомы:</string>
+
 </resources>
