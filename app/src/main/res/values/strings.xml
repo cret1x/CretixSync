@@ -10,5 +10,9 @@
     <string name="status_offline">оффлайн</string>
     <string name="status_online">онлайн</string>
     <string name="selected_albums">Выберите альбомы:</string>
-
+    <string name="cancel">Отмена</string>
+    <string name="hintPassword">Пароль</string>
+    <string name="hintLogin">Логин</string>
+    <string name="hintIp">Адрес сервера</string>
+    <string name="hintLogIn">Войти</string>
 </resources>

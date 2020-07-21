@@ -4,13 +4,11 @@ import android.Manifest
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-import android.util.Size
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -20,24 +18,29 @@ import com.cretix.cretixsync.ui.link.LinkFragment
 import com.cretix.cretixsync.ui.settings.SettingsFragment
 import com.cretix.cretixsync.ui.sync.SyncFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import java.lang.Exception
-import java.net.URI
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var prefs: SharedPreferences
     private val PREFS_NAME = "albums"
     private lateinit var albumsList: Bundle
+    private lateinit var nManager: UploadService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         if (!checkSelfPermission())
             requestPermission()
+
         albumsList = loadAllImages()
         prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val base_url = intent.getStringExtra("BASE_URL")!!
 
-        loadFragment(SyncFragment(albumsList))
+        nManager = NetworkManager.getClient(base_url)!!.create(UploadService::class.java)
+        val pulseTimer =  Timer("pulse")
+        loadFragment(SyncFragment(albumsList, nManager))
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
         navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
 
@@ -49,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
 
             R.id.navigation_sync -> {
-                var fragment = SyncFragment(albumsList)
+                var fragment = SyncFragment(albumsList, nManager)
                 loadFragment(fragment)
                 return@OnNavigationItemSelectedListener true
             }
@@ -84,23 +87,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getAlbumNames() : ArrayList<AlbumItem> {
+        val prefs = getSharedPreferences("selected_albums", Context.MODE_PRIVATE)
         val albums = mutableListOf<AlbumItem>()
         val projection = arrayOf(
             MediaStore.Images.Media._ID,
             MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
             MediaStore.Images.Media.BUCKET_ID,
-            MediaStore.Images.Media.RELATIVE_PATH
+            MediaStore.Images.Media.DATE_TAKEN
         )
         val images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         val names = mutableListOf<String>()
+        val sortOrder = MediaStore.Images.Media.DATE_TAKEN + " DESC"
         val cur = this.contentResolver.query(
             images,
             projection,
             null,
             null,
-            null
+            sortOrder
         )
-        if (cur!!.moveToFirst()) {
+        Log.i("ListingImages"," query count=" + cur!!.count);
+        var pos: Int = 0
+        if (cur.moveToFirst()) {
             var bucket: String
             var bId: Long
             var path: Uri
@@ -122,10 +129,12 @@ class MainActivity : AppCompatActivity() {
                         path = Uri.EMPTY
                     }
 
-                    albums.add(AlbumItem(bId, bucket, false, path))
+                    albums.add(AlbumItem(bId, bucket, prefs.getBoolean(pos.toString(), false), path))
+                    pos++
                 }
             } while (cur.moveToNext())
         }
+        cur.close()
         return albums as ArrayList<AlbumItem>
     }
 
