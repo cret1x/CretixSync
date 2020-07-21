@@ -55,8 +55,8 @@ class UploadBgService(val albumItem: AlbumItem, val context: Context, val BASE_U
         manager.cancelAll()
         createNotificationChannel()
         notificationBuilder = NotificationCompat.Builder(context, CHANNEL_ID).apply {
-            setContentTitle("Загрузка альбомов")
-            setContentText("Загрузка " + albumItem.name)
+            setContentTitle("Загрузка альбома " + albumItem.name)
+            setContentText("Загрузка")
             setSmallIcon(R.drawable.baseline_publish_24)
         }
         prefs = context.getSharedPreferences("authData", Context.MODE_PRIVATE)
@@ -82,7 +82,9 @@ class UploadBgService(val albumItem: AlbumItem, val context: Context, val BASE_U
                 val URL = BASE_URL + "/" + login + "/" + adler.value + "/" + file.name
                 val x = API.upload(URL, body)
                 val resp = x.execute()
-                notificationBuilder.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false)
+                notificationBuilder.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false).setContentText(
+                    "Загружено $PROGRESS_CURRENT/$PROGRESS_MAX"
+                )
                 PROGRESS_CURRENT++
                 manager.notify(1, notificationBuilder.build())
             } while (cur.moveToNext())

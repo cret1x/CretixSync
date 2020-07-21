@@ -15,10 +15,18 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        val ipX = ipInput
+        val loginX = loginInput
+        val passwordX = passwordInput
+        val btnLogin = loginButton
 
+        btnLogin.isEnabled = false
 
         val prefs = getSharedPreferences("authData", Context.MODE_PRIVATE)
         if (prefs.getBoolean("isAuth", false)) {
+            ipX.setText(prefs.getString("ip", ""))
+            loginX.setText(prefs.getString("login", ""))
+            passwordX.setText(prefs.getString("password", ""))
             val API: UploadService = NetworkManager.getClient(prefs.getString("ip", "")!!)!!.create(UploadService::class.java)
             val x = API.loginDevice(RegisterData(prefs.getString("login", "")!!, prefs.getString("password", "")!!))
                 .observeOn(AndroidSchedulers.mainThread())
@@ -38,10 +46,7 @@ class LoginActivity : AppCompatActivity() {
 
         }
 
-        val ipX = ipInput
-        val loginX = loginInput
-        val passwordX = passwordInput
-        val btnLogin = loginButton
+        btnLogin.isEnabled = true
 
         btnLogin.setOnClickListener {
             val ip = ipX.text.toString()
