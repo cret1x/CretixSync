@@ -1,0 +1,62 @@
+{% extends "layout.html" %} 
+{% block title %}Главная{% endblock %} 
+{% block content %}
+	<div class="container">
+		<div class="syncGroupsList">
+				<div class="group_">
+					<h4>Создание новой группы</h4>
+					<button class="btn btn-primary" data-toggle="modal" data-target="#addGroup">Добавить</button>
+				</div>
+				<ul class="list-unstyled">
+				{% for group in groups %}
+					<li class="group_">
+						<h5>{{group.name}}</h5>
+						<a href="/groups/{{group.id}}" class="btn btn-primary">Управление</a>
+					</li>
+				{% endfor %}
+				</ul>
+		</div>
+	</div>
+
+<div class="modal fade" id="addGroup" tabindex="-1" role="dialog" aria-labelledby="addGroupLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Доавить группу</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="form-inline" action="/create-group" method="POST">
+        	<div class="row w-100 mx-auto">
+        		<div class="col-6 p-0">
+					<div class="form-group mb-2">
+					    <label for="inputName" class="sr-only">Имя</label>
+					    <input type="text" class="form-control" id="inputName" name="name" placeholder="Имя" required> 
+					</div>
+        		</div>
+        		<div class="col-6 p-0">
+					<div class="form-group mb-2 float-right">
+					    <label for="inputPassword" class="sr-only">Пароль</label>
+					    <input type="password" class="form-control" id="inputPassword" placeholder="Пароль" name="password" required>
+					</div>
+        		</div>
+        	</div>
+		  
+		 
+		  <div class="form-group mb-2 w-100">
+		    <label for="inputPath" class="sr-only">Полный путь</label>
+		    <input type="text" class="form-control" id="inputPath" placeholder="Путь" name="path" required>
+		    <small id="pathHelp" class="form-text text-muted">Полный путь до папки с фотографиями</small>
+		  </div>
+		  <button type="submit" class="btn btn-primary mb-2">Добавить</button>
+		</form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

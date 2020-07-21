@@ -1,0 +1,28 @@
+.group_ {
+	margin-top: 2rem;
+	display: flex;
+	border: 1px #c3c3c3 solid;
+	border-radius: 5px;
+	padding: 1rem;
+	align-items: baseline;
+	justify-content: space-between;
+}
+
+#inputPath{
+	width: 100%;
+}
+
+@media (min-width: 576px) {
+}
+
+@media (min-width: 768px) {
+
+}
+
+@media (min-width: 992px) {
+
+}
+
+@media (min-width: 1200px) {
+
+}
