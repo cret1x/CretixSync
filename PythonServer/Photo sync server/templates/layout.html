@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% block head%}
+        <title>{% block title %}{% endblock %}</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="/static/style/style_layout.css">
+        <link rel="stylesheet" type="text/css" href="/static/style/style.css">
+        <link href="https://fonts.googleapis.com/css?family=Raleway|Roboto&display=swap" rel="stylesheet">
+        {% endblock %}
+    </head>
+    <body>
+        <div class="wrapper">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark main_nav">
+                <a class="navbar-brand nav_title" href="/">
+                    <img src="/static/icons/logo.svg" width="30" height="30" alt="">Sync Server
+                </a>    
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">Главная</a>
+                        </li>
+                    </ul>         
+                    {% block navbar %}
+                    
+                    {% endblock %}
+                </div>      
+            </nav>
+            {% block content %}
+            {% endblock %}
+
+            <div class="push"></div>
+        </div>
+        <footer class="footer">
+            <div class="container">
+                <span class="text-muted">&copy; 2020</span>
+            </div>
+        </footer>
+        <script type="text/javascript" src="/static/js/jquery-3.4.1.min.js"></script>
+        <script type="text/javascript" src="/static/js/popper.min.js"></script>
+        <script type="text/javascript" src="/static/bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="/static/js/script.js"></script>
+    </body>
+</html>

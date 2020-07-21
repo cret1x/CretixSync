@@ -1,0 +1,29 @@
+{% extends "layout.html" %} 
+{% block title %}Главная{% endblock %} 
+{% block content %}
+	<div class="container">
+		<div class="deviceList">
+			{% if devices|length == 0 %}
+				<div class="group_">
+					<h4>Устройста не добавлены</h4>
+				</div>
+			{% else %}
+				<ul class="list-unstyled">
+				{% for dev in devices %}
+					<li class="group_">
+						<h5>{{dev.login}}</h5>
+						<h5>{{dev.last_ip}}</h5>
+						{% if dev.last_status == 'offline'%}
+							<span class="badge badge-danger">Оффлайн</span>
+						{% elif dev.last_status == 'online' %}
+							<span class="badge badge-success">В сети</span>
+						{% else%}
+							<span class="badge badge-warning">Синхронизируется</span>
+						{% endif %}
+					</li>
+				{% endfor %}
+				</ul>
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}
