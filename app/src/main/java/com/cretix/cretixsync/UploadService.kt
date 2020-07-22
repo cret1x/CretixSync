@@ -27,6 +27,8 @@ class UploadBgService(val albumItem: AlbumItem, val context: Context, val BASE_U
     private val CHANNEL_ID = "Upload Service"
     lateinit var notificationBuilder: NotificationCompat.Builder
     lateinit var manager: NotificationManager
+    private val PREFS_NAME = "albumsDates"
+    private lateinit var albsPrefs: SharedPreferences
     lateinit var prefs: SharedPreferences
     var PROGRESS_CURRENT: Int = 0
     var PROGRESS_MAX: Int = 0
@@ -37,9 +39,10 @@ class UploadBgService(val albumItem: AlbumItem, val context: Context, val BASE_U
             MediaStore.Images.Media.BUCKET_ID,
             MediaStore.Images.Media.DATE_TAKEN
         )
+        albsPrefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         val sortOrder = MediaStore.Images.Media.DATE_TAKEN + " DESC"
-        val selection = MediaStore.Images.Media.BUCKET_ID + "=" + albumItem.id
+        val selection = MediaStore.Images.Media.BUCKET_ID + "=" + albumItem.id + " AND " + MediaStore.Images.Media.DATE_TAKEN + ">" + albsPrefs.getLong(albumItem.id.toString(), 0)
         val cur = context.contentResolver.query(
             images,
             projection,
@@ -49,6 +52,7 @@ class UploadBgService(val albumItem: AlbumItem, val context: Context, val BASE_U
         )
 
         Log.i("ListingImages",albumItem.name + " query count=" + cur!!.count);
+
         PROGRESS_MAX = cur.count
         PROGRESS_CURRENT = 1
         manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -60,6 +64,7 @@ class UploadBgService(val albumItem: AlbumItem, val context: Context, val BASE_U
             setSmallIcon(R.drawable.baseline_publish_24)
         }
         prefs = context.getSharedPreferences("authData", Context.MODE_PRIVATE)
+
         val login = prefs.getString("login", "user1")!!
 
         if (cur.moveToFirst()) {
@@ -89,6 +94,18 @@ class UploadBgService(val albumItem: AlbumItem, val context: Context, val BASE_U
                 manager.notify(1, notificationBuilder.build())
             } while (cur.moveToNext())
         }
+
+
+        if (cur.count > 0) {
+            val columnDate = cur.getColumnIndex(MediaStore.Images.Media.DATE_TAKEN)
+            cur.moveToFirst()
+            val lastDate: Long = cur.getLong(columnDate)
+            albsPrefs.edit().apply{
+                putLong(albumItem.id.toString(), lastDate)
+            }.apply()
+            cur.moveToFirst()
+        }
+
         cur.close()
 
         notificationBuilder.setProgress(0, 0, false).setContentText("Загрузка завершена")

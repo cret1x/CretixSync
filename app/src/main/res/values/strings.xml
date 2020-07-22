@@ -6,7 +6,6 @@
     <string name="sync_status_text">Статус сервера: </string>
     <string name="btn_start_sync">Синхронизировать</string>
     <string name="device_not_connected">Устройство не соединено</string>
-    <string name="status_not_connected">не соединен</string>
     <string name="status_offline">оффлайн</string>
     <string name="status_online">онлайн</string>
     <string name="selected_albums">Выберите альбомы:</string>
@@ -15,4 +14,5 @@
     <string name="hintLogin">Логин</string>
     <string name="hintIp">Адрес сервера</string>
     <string name="hintLogIn">Войти</string>
+    <string name="hingReg">Регистрация</string>
 </resources>

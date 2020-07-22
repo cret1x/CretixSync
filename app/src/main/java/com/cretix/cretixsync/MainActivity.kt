@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_link -> {
-                var fragment = LinkFragment()
+                var fragment = LinkFragment(nManager)
                 loadFragment(fragment)
                 return@OnNavigationItemSelectedListener true
             }

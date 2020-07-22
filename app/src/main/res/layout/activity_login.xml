@@ -17,37 +17,63 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <EditText
-            android:id="@+id/ipInput"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:ems="10"
             android:hint="@string/hintIp"
-            android:inputType="textNoSuggestions" />
+            android:inputType="textNoSuggestions"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-        <EditText
-            android:id="@+id/loginInput"
+            <com.google.android.material.textfield.TextInputEditText
+                android:textColor="@color/colorTextDark"
+                android:id="@+id/ipInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:ems="10"
             android:hint="@string/hintLogin"
-            android:inputType="textNoSuggestions" />
+            android:inputType="textNoSuggestions"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-        <EditText
-            android:id="@+id/passwordInput"
+            <com.google.android.material.textfield.TextInputEditText
+                android:textColor="@color/colorTextDark"
+                android:id="@+id/loginInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:ems="10"
             android:hint="@string/hintPassword"
-            android:inputType="textPassword" />
+            android:inputType="textNoSuggestions"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:endIconMode="password_toggle">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:textColor="@color/colorTextDark"
+                android:id="@+id/passwordInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPassword" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/loginButton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:background="@drawable/rounded_button_sync"
             android:text="@string/hintLogIn" />
     </LinearLayout>

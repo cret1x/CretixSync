@@ -131,14 +131,11 @@ def startSync():
 	device = models.Device.query.filter_by(login=login).first()
 	if not device:
 		return jsonify({'status': 400, 'error': ERROR_WRONG_PASS}), 400
-
 	group = models.Group.query.filter_by(id = device.group_id).first()
 	if not group:
 		return jsonify({'status': 400, 'error': ERROR_WRONG_PASS}), 400
-
 	if group.password != md5(password):
 		return jsonify({'status': 400, 'error': ERROR_WRONG_PASS}), 400
-
 	# albums -> create folders
 	if len(albums) == 0:
 		return jsonify({'status': 400, 'error': ERROR_NO_DATA}), 400
@@ -158,8 +155,23 @@ def startSync():
 	return jsonify({'status': 200, 'url': url})
 
 @app.route('/pulse', methods = ['POST'])
-def getInfo():
+def pulse():
+	content = request.get_json()
+	login = content.get('login')
+	password = content.get('password')
+	ip = request.remote_addr
+
+	device = models.Device.query.filter_by(login=login).update({'last_ip': ip})
+	db_session.commit()
 	return jsonify({'status': 200})
+
+@app.route('/info', methods = ['POST'])
+def getInfo():
+	content = request.get_json()
+	login = content.get('login')
+	password = content.get('password')
+	master_group = models.Group.query.filter_by(password = md5(password)).first()
+	return jsonify({'status': 200, 'name': master_group.name})
     
 @app.teardown_appcontext
 def shutdown_session(exception=None):

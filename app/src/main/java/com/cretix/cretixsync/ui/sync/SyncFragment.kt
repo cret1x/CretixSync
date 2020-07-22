@@ -2,12 +2,8 @@ package com.cretix.cretixsync.ui.sync
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.graphics.ImageDecoder
-import android.net.Uri
 import android.os.Bundle
-import android.os.FileUtils
-import android.provider.MediaStore
-import android.util.Log
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,23 +13,12 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cretix.cretixsync.*
-import io.reactivex.*
+import io.reactivex.Observable
+import io.reactivex.ObservableOnSubscribe
+import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import io.reactivex.functions.Function
-import io.reactivex.rxkotlin.Observables
-import io.reactivex.rxkotlin.plusAssign
-import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.schedulers.TestScheduler
-import io.reactivex.subscribers.DisposableSubscriber
-import okhttp3.MediaType
-import okhttp3.RequestBody
-import org.reactivestreams.Publisher
-import org.reactivestreams.Subscriber
-import java.io.File
-import java.util.concurrent.TimeUnit
 
 
 class SyncFragment(private var bundle: Bundle, private var apiService: UploadService) : Fragment() {
@@ -44,6 +29,7 @@ class SyncFragment(private var bundle: Bundle, private var apiService: UploadSer
     private lateinit var items: ArrayList<AlbumItem>
     private lateinit var recycler: RecyclerView
     private var uploadUrl = ""
+    private val PULSE_DELAY = 20000L
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -58,9 +44,22 @@ class SyncFragment(private var bundle: Bundle, private var apiService: UploadSer
         recycler.layoutManager = LinearLayoutManager(activity?.applicationContext)
         items = bundle.getParcelableArrayList<AlbumItem>("albums") as ArrayList<AlbumItem>
         recycler.adapter = AlbumsAdapter(requireActivity().applicationContext).apply { albumsList = items }
-
-
         val syncBtn = root.findViewById<Button>(R.id.btn_start_sync)
+        syncBtn.isEnabled = false
+        val pulseHandler = Handler()
+        pulseHandler.post(object : Runnable {
+            override fun run() {
+                val x = apiService.pulse(RegisterData(authPrefs.getString("login", "")!!, authPrefs.getString("password", "")!!))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe({ response ->
+                        syncBtn.isEnabled = true
+                    }, {
+                        syncBtn.isEnabled = false
+                    })
+                pulseHandler.postDelayed(this, PULSE_DELAY)
+            }
+        })
         syncBtn.setOnClickListener {
             syncBtn.setText(R.string.cancel)
             startSync(syncBtn)

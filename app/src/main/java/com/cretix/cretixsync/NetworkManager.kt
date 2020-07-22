@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit
 
 
 data class RegisterResponse(val status: Int, val error: Int)
+data class InfoResponse(val status: Int, val name: String)
 data class RegisterData(val login: String, val password: String)
 data class SyncInfo(val albums: List<String>, val login: String, val password: String)
 data class SyncResponse(val status: Int, val url: String)
@@ -32,7 +33,10 @@ interface UploadService {
     fun startSync(@Body syncData: SyncInfo): Observable<SyncResponse>
 
     @POST("/pulse")
-    fun pulse(): Observable<UploadResponse>
+    fun pulse(@Body regData: RegisterData): Observable<UploadResponse>
+
+    @POST("/info")
+    fun getInfo(@Body regData: RegisterData): Observable<InfoResponse>
 
     @POST
     @Multipart
