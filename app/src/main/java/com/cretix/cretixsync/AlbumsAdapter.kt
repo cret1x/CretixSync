@@ -12,11 +12,13 @@ import android.util.Size
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.item_album.view.*
 
-class AlbumsAdapter(ctx: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class AlbumsAdapter(val ctx: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val PREFS_NAME = "selected_albums"
     private var prefs: SharedPreferences = ctx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -50,8 +52,7 @@ class AlbumsAdapter(ctx: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder
             albumName.text = name
             checkBox.isChecked = box_checked
             if (thumbnail != Uri.EMPTY) {
-                val bitmap = contentResolver.loadThumbnail(thumbnail, Size(64,64), null)
-                albumCover.setImageBitmap(bitmap)
+                Glide.with(ctx).load(thumbnail).error(Glide.with(ctx).load(android.R.drawable.ic_menu_gallery)).into(albumCover)
                 /*
                 val palette = createPaletteSync(bitmap)
                 val gradient = GradientDrawable()

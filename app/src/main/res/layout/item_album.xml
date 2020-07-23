@@ -7,6 +7,7 @@
     android:background="@android:color/transparent">
 
     <androidx.cardview.widget.CardView
+
         android:id="@+id/cardBg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,6 +22,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:background="@drawable/album_selector_bg"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 

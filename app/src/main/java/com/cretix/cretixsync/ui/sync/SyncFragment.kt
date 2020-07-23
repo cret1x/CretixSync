@@ -21,32 +21,47 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
 
-class SyncFragment(private var bundle: Bundle, private var apiService: UploadService) : Fragment() {
-    private lateinit var prefs: SharedPreferences
+class SyncFragment() : Fragment() {
+    private lateinit var albumListPrefs: SharedPreferences
     private lateinit var authPrefs: SharedPreferences
-    private val PREFS_NAME = "selected_albums"
-    private val AUTH_PREFS_NAME = "authData"
+    private lateinit var apiService: UploadService
     private lateinit var items: ArrayList<AlbumItem>
     private lateinit var recycler: RecyclerView
+    private val PREFS_NAME = "selected_albums"
+    private val AUTH_PREFS_NAME = "authData"
+    private val PULSE_DELAY = 30000L
     private var uploadUrl = ""
-    private val PULSE_DELAY = 20000L
+
+    companion object {
+        @JvmStatic
+        fun newInstance(bundle: Bundle) =
+            SyncFragment().apply {
+                arguments = bundle
+            }
+    }
 
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-
+        val bundle = requireArguments()
         val root = inflater.inflate(R.layout.fragment_sync, container, false)
-        prefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        authPrefs = requireActivity().getSharedPreferences(AUTH_PREFS_NAME, Context.MODE_PRIVATE)
-        recycler = root.findViewById<RecyclerView>(R.id.album_selection)
-        recycler.layoutManager = LinearLayoutManager(activity?.applicationContext)
-        items = bundle.getParcelableArrayList<AlbumItem>("albums") as ArrayList<AlbumItem>
-        recycler.adapter = AlbumsAdapter(requireActivity().applicationContext).apply { albumsList = items }
-        val syncBtn = root.findViewById<Button>(R.id.btn_start_sync)
-        syncBtn.isEnabled = false
+        val apiService: UploadService = NetworkManager.getClient(bundle.getString("BASE_URL")!!)!!.create(UploadService::class.java)
+        val syncBtn: Button = root.findViewById(R.id.btn_start_sync)
         val pulseHandler = Handler()
+
+        albumListPrefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        authPrefs = requireActivity().getSharedPreferences(AUTH_PREFS_NAME, Context.MODE_PRIVATE)
+        items = bundle.getParcelableArrayList<AlbumItem>("albums") as ArrayList<AlbumItem>
+
+
+        recycler = root.findViewById(R.id.album_selection)
+        recycler.layoutManager = LinearLayoutManager(activity?.applicationContext)
+        recycler.adapter = AlbumsAdapter(requireActivity().applicationContext).apply { albumsList = items }
+
+        syncBtn.isEnabled = false
+
         pulseHandler.post(object : Runnable {
             override fun run() {
                 val x = apiService.pulse(RegisterData(authPrefs.getString("login", "")!!, authPrefs.getString("password", "")!!))
@@ -73,7 +88,7 @@ class SyncFragment(private var bundle: Bundle, private var apiService: UploadSer
         val sel = mutableListOf<String>()
         val albs = mutableListOf<AlbumItem>()
         for (i in 0 until items.size) {
-            if (prefs.getBoolean(i.toString(), false)) {
+            if (albumListPrefs.getBoolean(i.toString(), false)) {
                 sel.add(items[i].name)
                 albs.add(items[i])
             }
@@ -108,7 +123,7 @@ class SyncFragment(private var bundle: Bundle, private var apiService: UploadSer
                 }
 
                 override fun onSubscribe(d: Disposable) {
-                    println("onSubscribe")
+                    println("startUpload")
                 }
 
                 override fun onNext(t: AlbumItem) {

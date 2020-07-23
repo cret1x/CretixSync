@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#8460af</color>
+    <color name="colorPrimaryDark">#55406f</color>
+    <color name="colorAccent">#ab47bc</color>
+
+    <color name="colorTextLoginForm">#ffffff</color>
+    <color name="navBarColor">#000000</color>
+
+    <color name="darkBackground">#121212</color>
+    <color name="darkForeground">#883a2d49</color>
+</resources>

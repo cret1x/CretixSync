@@ -2,6 +2,7 @@ package com.cretix.cretixsync
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -10,10 +11,16 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
+    private val NIGHT_MODE_PREFS_NAME = "nightMode"
+    private lateinit var nightModePrefs: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        nightModePrefs = getSharedPreferences(NIGHT_MODE_PREFS_NAME, Context.MODE_PRIVATE)
+        MainActivity.setNightMode(nightModePrefs.getBoolean("night", false))
 
         val ipX = ipInput
         val loginX = loginInput

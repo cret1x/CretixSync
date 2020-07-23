@@ -45,7 +45,7 @@ def group(gid):
 
 @app.route('/upload/<gid>/<login>/<album>/<filename>', methods=['POST'])
 def upload(gid,login,album,filename):
-	file = request.files['picture']
+	file = request.files['file']
 	path = models.Group.query.filter_by(id = gid).first().path
 	path = os.path.join(path, login)
 	path = os.path.join(path, album)

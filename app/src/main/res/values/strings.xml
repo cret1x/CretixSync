@@ -14,5 +14,7 @@
     <string name="hintLogin">Логин</string>
     <string name="hintIp">Адрес сервера</string>
     <string name="hintLogIn">Войти</string>
+    <string name="logout">Выйти</string>
     <string name="hingReg">Регистрация</string>
+
 </resources>

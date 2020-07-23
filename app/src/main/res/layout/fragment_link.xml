@@ -13,12 +13,12 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        app:cardCornerRadius="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
+            android:background="@drawable/album_selector_bg"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal">

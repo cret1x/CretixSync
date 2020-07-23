@@ -8,17 +8,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.cretix.cretixsync.NetworkManager
 import com.cretix.cretixsync.R
 import com.cretix.cretixsync.RegisterData
 import com.cretix.cretixsync.UploadService
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-class LinkFragment(val apiService: UploadService) : Fragment() {
-
-    private lateinit var linkViewModel: LinkViewModel
+class LinkFragment() : Fragment() {
+    private lateinit var authPrefs: SharedPreferences
+    private lateinit var apiService: UploadService
     private val AUTH_PREFS_NAME = "authData"
-    lateinit var authPrefs: SharedPreferences
+
+    companion object {
+        @JvmStatic
+        fun newInstance(bundle: Bundle) =
+            LinkFragment().apply {
+                arguments = bundle
+            }
+    }
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -26,16 +34,20 @@ class LinkFragment(val apiService: UploadService) : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_link, container, false)
-        val status_connected = root.findViewById<TextView>(R.id.status_connected)
-        status_connected.text = getString(R.string.status_offline)
+        val bundle = requireArguments()
+        val textStatusConnected = root.findViewById<TextView>(R.id.status_connected)
+
         authPrefs = requireContext().getSharedPreferences(AUTH_PREFS_NAME, Context.MODE_PRIVATE)
+        apiService = NetworkManager.getClient(bundle.getString("BASE_URL")!!)!!.create(UploadService::class.java)
+
+        textStatusConnected.text = getString(R.string.status_offline)
         val x= apiService.getInfo(RegisterData(authPrefs.getString("login", "")!!, authPrefs.getString("password", "")!!))
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe({ response ->
-                status_connected.text = "Подключен к группе \n'" + response.name + "'"
+                textStatusConnected.text = "Подключен к группе \n'" + response.name + "'"
             }, {
-                status_connected.text = getString(R.string.status_offline)
+                textStatusConnected.text = getString(R.string.status_offline)
             })
         return root
     }

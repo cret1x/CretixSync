@@ -6,7 +6,6 @@ import android.content.ContentUris
 import android.content.Context
 import android.content.SharedPreferences
 import android.database.Cursor
-import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -14,9 +13,6 @@ import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -35,16 +31,26 @@ class UploadBgService(val albumItem: AlbumItem, val context: Context, val BASE_U
 
     fun startUpload(){
         val projection = arrayOf(
-            MediaStore.Images.Media._ID,
-            MediaStore.Images.Media.BUCKET_ID,
-            MediaStore.Images.Media.DATE_TAKEN
+            MediaStore.Files.FileColumns._ID,
+            MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,
+            MediaStore.Files.FileColumns.BUCKET_ID,
+            MediaStore.Files.FileColumns.MEDIA_TYPE,
+            MediaStore.Files.FileColumns.MIME_TYPE,
+            MediaStore.Files.FileColumns.TITLE,
+            MediaStore.Files.FileColumns.DATE_TAKEN
         )
         albsPrefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        val images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        val sortOrder = MediaStore.Images.Media.DATE_TAKEN + " DESC"
-        val selection = MediaStore.Images.Media.BUCKET_ID + "=" + albumItem.id + " AND " + MediaStore.Images.Media.DATE_TAKEN + ">" + albsPrefs.getLong(albumItem.id.toString(), 0)
+        val files = MediaStore.Files.getContentUri("external")
+        val sortOrder = MediaStore.Files.FileColumns.DATE_TAKEN + " DESC"
+        val selection = MediaStore.Files.FileColumns.BUCKET_ID + "=" + albumItem.id + " AND " +
+                MediaStore.Files.FileColumns.DATE_TAKEN + ">" + albsPrefs.getLong(albumItem.id.toString(), 0) + " AND (" +
+                (MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                        + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
+                        + " OR "
+                        + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                        + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO) + ")"
         val cur = context.contentResolver.query(
-            images,
+            files,
             projection,
             selection,
             null,
@@ -69,19 +75,14 @@ class UploadBgService(val albumItem: AlbumItem, val context: Context, val BASE_U
 
         if (cur.moveToFirst()) {
             var path: Uri
-            var imageId: Long
+            var fileId: Long
             val idColumn = cur.getColumnIndex(MediaStore.Images.Media._ID)
             do {
-                imageId = cur.getLong(idColumn)
-                path = Uri.withAppendedPath(images, "" + imageId)
-                try {
-                    ImageDecoder.decodeBitmap(ImageDecoder.createSource(context.contentResolver, path))
-                } catch (e: Exception){
-                    continue
-                }
+                fileId = cur.getLong(idColumn)
+                path = Uri.withAppendedPath(files, "" + fileId)
                 val file: File = File(getRealPathFromURI(context, path))
                 val requestFile = RequestBody.create(MediaType.parse(context.contentResolver.getType(path)), file)
-                val body = MultipartBody.Part.createFormData("picture", file.name, requestFile)
+                val body = MultipartBody.Part.createFormData("file", file.name, requestFile)
                 val adler = Adler32()
                 adler.update(albumItem.name.toByteArray())
                 val URL = BASE_URL + "/" + login + "/" + adler.value + "/" + file.name

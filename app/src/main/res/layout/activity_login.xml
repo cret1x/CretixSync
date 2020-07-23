@@ -26,7 +26,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:textColor="@color/colorTextDark"
+                android:textColor="@color/colorTextLoginForm"
                 android:id="@+id/ipInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:textColor="@color/colorTextDark"
+                android:textColor="@color/colorTextLoginForm"
                 android:id="@+id/loginInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -61,7 +61,7 @@
             app:endIconMode="password_toggle">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:textColor="@color/colorTextDark"
+                android:textColor="@color/colorTextLoginForm"
                 android:id="@+id/passwordInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

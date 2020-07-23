@@ -7,17 +7,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.TextView
+import android.widget.Switch
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import com.cretix.cretixsync.MainActivity
 import com.cretix.cretixsync.R
 
 class SettingsFragment : Fragment() {
-
-    private lateinit var settingsViewModel: SettingsViewModel
+    private lateinit var albumsDatePrefs: SharedPreferences
+    private lateinit var nightModePrefs: SharedPreferences
+    private val NIGHT_MODE_PREFS_NAME = "nightMode"
     private val PREFS_NAME = "albumsDates"
-    private lateinit var albsPrefs: SharedPreferences
+
+    companion object {
+        @JvmStatic
+        fun newInstance(bundle: Bundle) =
+            SettingsFragment().apply {
+                arguments = bundle
+            }
+    }
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -25,11 +33,26 @@ class SettingsFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_settings, container, false)
-        albsPrefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        val resetSyncDate = root.findViewById<Button>(R.id.resetSyncDate)
+        val resetSyncDate: Button = root.findViewById(R.id.resetSyncDate)
+        val logOutButton: Button = root.findViewById(R.id.logOutButton)
+        val nightSwitch: Switch = root.findViewById(R.id.night_switch)
+
+        albumsDatePrefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        nightModePrefs = requireActivity().getSharedPreferences(NIGHT_MODE_PREFS_NAME, Context.MODE_PRIVATE)
+
+        nightSwitch.isChecked = nightModePrefs.getBoolean("night", false)
+
         resetSyncDate.setOnClickListener {
-            albsPrefs.edit().clear().apply()
+            albumsDatePrefs.edit().clear().apply()
+        }
+        logOutButton.setOnClickListener {
+            Toast.makeText(requireContext(), "тык", Toast.LENGTH_SHORT).show()
+        }
+        nightSwitch.setOnCheckedChangeListener { _, isChecked ->
+            MainActivity.setNightMode(isChecked)
+            nightModePrefs.edit().putBoolean("night", isChecked).apply()
         }
         return root
     }
+
 }
